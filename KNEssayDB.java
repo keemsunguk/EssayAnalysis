@@ -178,8 +178,8 @@ public class KNEssayDB {
 		//countReviewedEssaysSQL = countReviewedEssaysSQL
 		//essaysSQL = "SELECT recno, essay, status, rate, wcount FROM essays where status = 'Reviewed'";
 		
-		essaysSQL = "SELECT essays.recno, essays.essay, status, essays.rate, essays.wcount FROM essays, nlp3 WHERE essays.`recno` = nlp3.`essayNo` and nlp3.type = 'GRE' and status = 'Reviewed'";
-		countReviewedEssaysSQL = "SELECT count(distinct essays.recno) as essayTotal FROM essays, nlp3 WHERE essays.`recno` = nlp3.`essayNo` and nlp3.type = 'GRE' and status = 'Reviewed'";
+		essaysSQL = "SELECT essays.recno, essays.essay, status, essays.rate, essays.wcount FROM essays, nlp3 WHERE essays.`recno` = nlp3.`essayNo` and nlp3.type = 'GRE' and status = 'Reviewed' limit 2";
+		countReviewedEssaysSQL = "SELECT count(distinct essays.recno) as essayTotal FROM essays, nlp3 WHERE essays.`recno` = nlp3.`essayNo` and nlp3.type = 'GRE' and status = 'Reviewed' limit 2";
 		essayCountSQL = countReviewedEssaysSQL;
 	}
 	

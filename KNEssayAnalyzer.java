@@ -3,13 +3,7 @@ package EssayAnalysis;
 import java.io.*;
 import java.util.*;
 
-//import edu.stanford.nlp.io.*;
-import edu.stanford.nlp.ling.*;
 import edu.stanford.nlp.pipeline.*;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreeCoreAnnotations;
-//import edu.stanford.nlp.trees.*;
-import edu.stanford.nlp.util.*;
 
 public class KNEssayAnalyzer {
 	
@@ -52,21 +46,17 @@ public class KNEssayAnalyzer {
 		annotation = new Annotation(e.essay);
 	
 	    pipeline.annotate(annotation);
-	    pipeline.prettyPrint(annotation, out);
+//	    pipeline.prettyPrint(annotation, out);
 	    String localXmlName = xmlName+e.recno.toString()+".xml";
 	    xmlOut = new PrintWriter(localXmlName);
-	    pipeline.xmlPrint(annotation, xmlOut);
+	    pipeline.xmlPrint(annotation, xmlOut);	    
 	    xmlOut.close();
 	    
-/*	    List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-	    if (sentences != null && sentences.size() > 0) {
-	      CoreMap sentence = sentences.get(0);
-	      Tree tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
-	      out.println(tree.toString());
-	    }
-*/	    
+	    ExtractXMLComponent.PrintAnnotationComponent(annotation);
+
 	}
 	System.out.println("Done");
+	out.close();
   }
 
 }
