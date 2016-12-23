@@ -1,47 +1,34 @@
 package EssayAnalysis;
 
-//import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.util.Vector;
+import org.xeustechnologies.googleapi.spelling.Configuration;
+import org.xeustechnologies.googleapi.spelling.Language;
+import org.xeustechnologies.googleapi.spelling.SpellChecker;
+import org.xeustechnologies.googleapi.spelling.SpellCorrection;
+import org.xeustechnologies.googleapi.spelling.SpellRequest;
+import org.xeustechnologies.googleapi.spelling.SpellResponse;
 
-import net.didion.jwnl.JWNL;
-import net.didion.jwnl.JWNLException;
-import net.didion.jwnl.data.POS;
-import net.didion.jwnl.dictionary.Dictionary;
-
-/*
-import org.w3c.dom.Document;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-*/
 public class SpellingChecker {
-	
-	private static Dictionary dictionary;
-	
-	public SpellingChecker() throws IOException {
-		System.out.println("Building Dictionairy");
-		String s;
-		try {
-			JWNL.initialize(new FileInputStream("/Users/keemsunguk/Applications/jwnl14-rc2/config/file_properties.xml"));
-		} catch (JWNLException e) {
-			e.printStackTrace();
-		}
-		if(!JWNL.isInitialized()) {
-			System.out.println("Dictionary missing");
-		}
-		dictionary = Dictionary.getInstance();
+		
+	public SpellingChecker()  {
 	}
 
-	public static boolean eval(String pos, String word){
-		POS p = new POS;
-		if( dictionary.getIndexWord(p,word) ) {
-			return true;
-		}
-		return false;
+	public static void eval(String e){
+		// Proxy settings 
+		Configuration config = new Configuration(); 
+		config.setProxy( "my_proxy_host", 8080, "http" );
+
+		SpellChecker checker = new SpellChecker( config ); 
+		checker.setOverHttps( true ); // Use https (default true from v1.1) 
+		checker.setLanguage( Language.ENGLISH ); // Use English (default)
+
+		SpellRequest request = new SpellRequest(); 
+		request.setText(e); 
+		request.setIgnoreDuplicates( true ); // Ignore duplicates
+
+		SpellResponse spellResponse = checker.check( request );
+
+		for( SpellCorrection sc : spellResponse.getCorrections() ) 
+			System.out.println( sc.getValue() );
 	}
 	
 

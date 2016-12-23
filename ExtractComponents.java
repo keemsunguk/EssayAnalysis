@@ -31,12 +31,12 @@ import edu.stanford.nlp.util.Pair;
 import edu.stanford.nlp.util.StringUtils;
 import nu.xom.*;
 
-public class ExtractXMLComponent {
+public class ExtractComponents {
 	
-	public ExtractXMLComponent() {
+	public ExtractComponents() {
 		
 	}
-
+	
 	public static void PrintAnnotationComponent(Annotation annotation) {
 		
 		if(annotation.get(CoreAnnotations.SentencesAnnotation.class) != null){
@@ -55,9 +55,6 @@ public class ExtractXMLComponent {
 					String tmpLemma=tokens.get(j).lemma();
 					String tmpPos=tokens.get(j).get(CoreAnnotations.PartOfSpeechAnnotation.class);
 					System.out.print(tmpLemma+"("+tmpPos+":"+") ");
-					if( !SpellingChecker.eval(tmpPos, tmpWord) ) {
-						System.out.println(tmpWord+" Misspelled");
-					}
 				}
 				System.out.println();
 				// print tree info
@@ -100,7 +97,3 @@ public class ExtractXMLComponent {
 	}
 
 }
-
-
-
-

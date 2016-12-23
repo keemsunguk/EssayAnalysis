@@ -51,8 +51,9 @@ public class KNEssayAnalyzer {
 	    xmlOut = new PrintWriter(localXmlName);
 	    pipeline.xmlPrint(annotation, xmlOut);	    
 	    xmlOut.close();
-	    
-	    ExtractXMLComponent.PrintAnnotationComponent(annotation);
+		SpellingChecker.eval(e.essay);
+
+	    ExtractComponents.PrintAnnotationComponent(annotation);
 
 	}
 	System.out.println("Done");
