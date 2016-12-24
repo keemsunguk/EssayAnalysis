@@ -22,7 +22,7 @@ public class KEAnalyzeDataBase {
 
 	    ArrayList <Features> featuresList = new ArrayList <Features>();
 	    for (EssayData e : essayList) {
-	    	ArrayList <PoeData> poe = essayDB.GetPoeData(e.recno);
+	    	ArrayList <PosData> poe = essayDB.GetPosData(e.recno);
 	    	Features temp = new Features();
 	    	temp.PopulateFeaturesFromEssay(e);
 	    	temp.PopulateFeaturesFromPos(poe);

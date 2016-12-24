@@ -3,6 +3,7 @@ package EssayAnalysis;
 import java.io.*;
 import java.util.*;
 
+import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.pipeline.*;
 
 public class KNEssayAnalyzer {
@@ -32,6 +33,7 @@ public class KNEssayAnalyzer {
 	if(_verboseMode) System.out.println("Verbose Mode On");		
 
 	ArrayList <EssayData> essayList = essayDB.PopulateEssayData();
+    ArrayList <Features> featuresList = new ArrayList <Features>();
 	
 	Properties props = new Properties();
 
@@ -40,10 +42,12 @@ public class KNEssayAnalyzer {
     props.put("ner.applyNumericClassifiers", "false");
 
     StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
+    SpellingChecker spellCheck = new SpellingChecker();
     Annotation annotation;
     
 	for(EssayData e:essayList) {
 		annotation = new Annotation(e.essay);
+	    ArrayList <PosData> pos;
 	
 	    pipeline.annotate(annotation);
 //	    pipeline.prettyPrint(annotation, out);
@@ -51,11 +55,26 @@ public class KNEssayAnalyzer {
 	    xmlOut = new PrintWriter(localXmlName);
 	    pipeline.xmlPrint(annotation, xmlOut);	    
 	    xmlOut.close();
-		SpellingChecker.eval(e.essay);
-
+	    
+	    ExtractComponents.setSpellChecker(spellCheck);
+	    ExtractComponents.resetCount();
 	    ExtractComponents.PrintAnnotationComponent(annotation);
-
+	    pos = ExtractComponents.getPOS();
+	    
+	    Features temp = new Features();
+    	temp.PopulateFeaturesFromEssay(e);
+    	temp.setMisspelledCount(ExtractComponents.getMisspellCount());
+    	temp.setSentenceCount(annotation.get(CoreAnnotations.SentencesAnnotation.class).size());
+    	temp.setLongWordsCount(ExtractComponents.getLongWordCount());
+    	temp.PopulateFeaturesFromPos(pos);
+     	featuresList.add(temp);
 	}
+	
+	Features.WriteHeader();
+    for(Features f : featuresList) {
+		f.WriteCSV();
+    }
+
 	System.out.println("Done");
 	out.close();
   }

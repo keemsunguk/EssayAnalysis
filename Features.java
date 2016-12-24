@@ -14,6 +14,7 @@ public class Features {
 	private Double avgWordLength;
 	private Integer noOfSentences;
 	private Integer noOfLongWords;
+	private Integer noOfMisspelled;
 	private Integer CCcount;
 	private Integer CDcount;
 	private Integer DTcount;
@@ -44,6 +45,7 @@ public class Features {
 	
 	public Features() {
 		noOfLongWords = 0;
+		noOfMisspelled = 0;
 		CCcount = 0;
 		CDcount = 0;
 		DTcount = 0;
@@ -75,25 +77,12 @@ public class Features {
 		rate = e.rate;
 		length = e.essay.length();
 		wordCount = e.wordCount;
+		avgWordLength = Double.valueOf(length)/wordCount;
 	}
 	
-	public void PopulateFeaturesFromPos(ArrayList<PoeData> posList) {
-		int totalLength = 0;
-		int wcnt = 0;
-		int maxSentenceNo = 0;
+	public void PopulateFeaturesFromPos(ArrayList<PosData> posList) {
 
-		for(PoeData p : posList) {
-			if(!(p.lemma.equals(".") ||  p.lemma.equals(",")) ) {
-				totalLength += p.lemma.length();
-				wcnt++;
-				if(p.lemma.length() > 5) {
-					noOfLongWords++;
-				}
-			}
-			if(maxSentenceNo < p.sentenceNo) {
-				maxSentenceNo = p.sentenceNo;
-			}
-			
+		for(PosData p : posList) {
 			switch(p.pos) {
 			case "CC":
 				CCcount++;
@@ -163,15 +152,25 @@ public class Features {
 				break;
 			}
 		}
-		avgWordLength = Double.valueOf(totalLength)/wcnt;
-		noOfSentences = maxSentenceNo;
 		VBall = VBcount+VBDcount+VBGcount+VBNcount+VBPcount+VBZcount;
 		
 	}
 	
+	public void setMisspelledCount(int c) {
+		noOfMisspelled = c;
+	}
+	
+	public void setSentenceCount(int s) {
+		noOfSentences = s;
+	}
+	
+	public void setLongWordsCount(int w) {
+		noOfLongWords = w;
+	}
+
 	public void WriteCSV() {
 		System.out.format("%d,%d,%d,%d,", essayNo,rate,length, wordCount);
-		System.out.format("%3.2f,%d,%d,%d,", avgWordLength, noOfSentences,noOfLongWords, VBall);
+		System.out.format("%3.2f,%d,%d,%d,%d,", avgWordLength, noOfSentences,noOfLongWords, noOfMisspelled, VBall);
 		System.out.format("%d,%d,%d,%d,", CCcount, CDcount, DTcount, EXcount);
 		System.out.format("%d,%d,%d,%d,", INcount, JJcount, MDcount, NNcount);
 		System.out.format("%d,%d,%d,%d,", NNPcount, PRPcount, RBcount, TOcount);
@@ -185,7 +184,7 @@ public class Features {
 			    PrintWriter out = new PrintWriter(bw))
 		{
 			out.format("%d,%d,%d,%d,", essayNo,rate,length, wordCount);
-			out.format("%3.2f,%d,%d,%d,", avgWordLength, noOfSentences,noOfLongWords, VBall);
+			out.format("%3.2f,%d,%d,%d,%d,", avgWordLength, noOfSentences,noOfLongWords, noOfMisspelled, VBall);
 			out.format("%d,%d,%d,%d,", CCcount, CDcount, DTcount, EXcount);
 			out.format("%d,%d,%d,%d,", INcount, JJcount, MDcount, NNcount);
 			out.format("%d,%d,%d,%d,", NNPcount, PRPcount, RBcount, TOcount);
@@ -201,7 +200,7 @@ public class Features {
 	}
 	
 	public static void WriteHeader() {
-	    System.out.println("eid,rate,length,wcount,avgWordLength, noOfSentences,noOfLongWords,VBall,"
+	    System.out.println("eid,rate,length,wcount,avgWordLength, noOfSentences,noOfLongWords,noOfMisspelled,VBall,"
 	    		+ "CCcount, CDcount, DTcount, EXcount,INcount, JJcount, MDcount, NNcount,NNPcount, PRPcount, RBcount, TOcount,"
 	    		+ "VBcount, VBDcount, VBGcount, VBNcount,VBPcount, VBZcount, WDTcount, WPcount, WRBcount");		
 	}
@@ -210,7 +209,7 @@ public class Features {
 			    BufferedWriter bw = new BufferedWriter(fw);
 			    PrintWriter out = new PrintWriter(bw))
 		{
-			out.println("eid,rate,length,wcount,avgWordLength, noOfSentences,noOfLongWords,VBall,"
+			out.println("eid,rate,length,wcount,avgWordLength, noOfSentences,noOfLongWords,noOfMisspelled,VBall,"
 		    		+ "CCcount, CDcount, DTcount, EXcount,INcount, JJcount, MDcount, NNcount,NNPcount, PRPcount, RBcount, TOcount,"
 		    		+ "VBcount, VBDcount, VBGcount, VBNcount,VBPcount, VBZcount, WDTcount, WPcount, WRBcount");			out.close();
 			bw.close();

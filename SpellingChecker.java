@@ -1,35 +1,56 @@
 package EssayAnalysis;
 
-import org.xeustechnologies.googleapi.spelling.Configuration;
-import org.xeustechnologies.googleapi.spelling.Language;
-import org.xeustechnologies.googleapi.spelling.SpellChecker;
-import org.xeustechnologies.googleapi.spelling.SpellCorrection;
-import org.xeustechnologies.googleapi.spelling.SpellRequest;
-import org.xeustechnologies.googleapi.spelling.SpellResponse;
+import java.io.BufferedReader;
+import java.io.File;
+//import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+//import java.util.Dictionary;
+//import java.util.Vector;
+
+
 
 public class SpellingChecker {
+	private File inf;
+	private static ArrayList<String> dictMemory = new ArrayList<String>();
+	
+	public SpellingChecker() {
+		System.out.println("Building Dictionairy");
+		String s = "dictionary.txt";
+		inf = new File(s);
 		
-	public SpellingChecker()  {
+		try {
+			BufferedReader inbuf = new BufferedReader (new FileReader (inf));
+			try {
+				String oneLine;
+				while ((oneLine = inbuf.readLine()) != null) {
+					dictMemory.add(oneLine);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			try {
+				inbuf.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
 	}
 
-	public static void eval(String e){
-		// Proxy settings 
-		Configuration config = new Configuration(); 
-		config.setProxy( "my_proxy_host", 8080, "http" );
-
-		SpellChecker checker = new SpellChecker( config ); 
-		checker.setOverHttps( true ); // Use https (default true from v1.1) 
-		checker.setLanguage( Language.ENGLISH ); // Use English (default)
-
-		SpellRequest request = new SpellRequest(); 
-		request.setText(e); 
-		request.setIgnoreDuplicates( true ); // Ignore duplicates
-
-		SpellResponse spellResponse = checker.check( request );
-
-		for( SpellCorrection sc : spellResponse.getCorrections() ) 
-			System.out.println( sc.getValue() );
+	public static boolean eval(String word) {
+		if (dictMemory.contains(word)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
-
+	public ArrayList<String> getDictionary() {
+		return dictMemory;
+	}
 }

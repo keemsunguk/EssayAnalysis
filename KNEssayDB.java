@@ -291,8 +291,8 @@ public class KNEssayDB {
 	   return rowCount;  
 	}  
 	
-	public ArrayList <PoeData> GetPoeData(int essayNo) {
-		ArrayList <PoeData> list = null; 		//return variable
+	public ArrayList <PosData> GetPosData(int essayNo) {
+		ArrayList <PosData> list = null; 		//return variable
 		ResultSet dataResult;					//Database result connector
 //		Integer rowCounts = 0;
 		
@@ -302,11 +302,11 @@ public class KNEssayDB {
 			dataResult = pos.executeQuery();
 //			rowCounts = GetRowCount();
 			
-			list = new ArrayList <PoeData>(); 
+			list = new ArrayList <PosData>(); 
 			dataResult.setFetchSize(0);
 			
 			while (dataResult.next()){
-				PoeData tempData = new PoeData(); //Symbol
+				PosData tempData = new PosData(); //Symbol
 				
 				tempData.essayNo = dataResult.getInt(1);		//recored number
 				tempData.sentenceNo = dataResult.getInt(2);	

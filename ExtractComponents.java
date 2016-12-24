@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -32,20 +33,48 @@ import edu.stanford.nlp.util.StringUtils;
 import nu.xom.*;
 
 public class ExtractComponents {
+	private static SpellingChecker speller;
+	private static int misspellCount;
+	private static int noOfLongWord;
+	private static ArrayList<PosData> pos;
+	private static int essayNo;
 	
 	public ExtractComponents() {
 		
+	}
+	public static void setEssayNo(int eno) {
+		essayNo = eno;
+	}
+	
+	public static void setSpellChecker(SpellingChecker s) {
+		speller = s;
+	}
+
+	public static int getMisspellCount() {
+		return misspellCount;
+	}
+
+	public static int getLongWordCount() {
+		return noOfLongWord;
+	}	
+	
+	public static void resetCount() {
+		misspellCount = 0;
+		noOfLongWord = 0;
+	}
+	
+	public static ArrayList<PosData> getPOS() {
+		return pos;
 	}
 	
 	public static void PrintAnnotationComponent(Annotation annotation) {
 		
 		if(annotation.get(CoreAnnotations.SentencesAnnotation.class) != null){
 			int sentCount = 1;
-			
+			pos = new ArrayList<PosData>();
 			for (CoreMap sentence: annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
 			      //Integer lineNumber = sentence.get(CoreAnnotations.LineNumberAnnotation.class);
 				System.out.print("line "+sentCount+":");
-			    
 				sentCount ++;
 				
 				// add the word table with all token-level annotations
@@ -54,6 +83,29 @@ public class ExtractComponents {
 					String tmpWord=tokens.get(j).word();
 					String tmpLemma=tokens.get(j).lemma();
 					String tmpPos=tokens.get(j).get(CoreAnnotations.PartOfSpeechAnnotation.class);
+					pos.add(new PosData(essayNo, sentCount, tmpPos, tmpLemma));
+					boolean goodSpell = true;
+					goodSpell = speller.eval(tmpWord.toLowerCase());
+					if (!goodSpell) {
+						try {
+							if( Double.valueOf(tmpWord) == null ) {
+								goodSpell = false;
+							} else {
+								goodSpell = true;
+							}
+						} catch (NumberFormatException e) {
+							goodSpell = false;
+						}
+					}
+					if(!goodSpell) {
+						misspellCount++;
+						System.out.print("Misspelled ("+tmpWord+")");
+					}
+					
+					if(tmpLemma.length() > 5) {
+						noOfLongWord++;
+					}
+
 					System.out.print(tmpLemma+"("+tmpPos+":"+") ");
 				}
 				System.out.println();
@@ -95,5 +147,4 @@ public class ExtractComponents {
 			System.out.println("Total Sentence: "+sentCount);
 		}
 	}
-
 }
